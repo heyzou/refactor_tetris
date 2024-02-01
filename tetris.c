@@ -61,8 +61,7 @@ int CheckPosition(Struct shape){
 		for(j = 0; j < shape.width ;j++){
 			if((shape.col+j < 0 || shape.col+j >= C || shape.row+i >= R)){
 				if(array[i][j])
-					return F;
-				
+					return F;	
 			}
 			else if(Table[shape.row+i][shape.col+j] && array[i][j])
 				return F;
@@ -115,10 +114,69 @@ void set_timeout(int time) {
 	timeout(1);
 }
 
+void ExecuteInputKey(Struct temp,int input_key){
+	switch(input_key){
+		case 's':
+			temp.row++;  //move down
+			if(CheckPosition(temp))
+				current.row++;
+			else {
+				int i, j;
+				for(i = 0; i < current.width ;i++){
+					for(j = 0; j < current.width ; j++){
+						if(current.array[i][j])
+							Table[current.row+i][current.col+j] = current.array[i][j];
+					}
+				}
+				int n, m, sum, count=0;
+				for(n=0;n<R;n++){
+					sum = 0;
+					for(m=0;m< C;m++) {
+						sum+=Table[n][m];
+					}
+					if(sum==C){
+						count++;
+						int l, k;
+						for(k = n;k >=1;k--)
+							for(l=0;l<C;l++)
+								Table[k][l]=Table[k-1][l];
+						for(l=0;l<C;l++)
+							Table[k][l]=0;
+						timer-=decrease--;
+					}
+				}
+				final += 100*count;
+				Struct new_shape = CopyShape(StructsArray[rand()%7]);
+				new_shape.col = rand()%(C-new_shape.width+1);
+				new_shape.row = 0;
+				DestroyShape(current);
+				current = new_shape;
+				if(!CheckPosition(current)){
+					GameOn = F;
+				}
+			}
+			break;
+		case 'd':
+			temp.col++;
+			if(CheckPosition(temp))
+				current.col++;
+			break;
+		case 'a':
+			temp.col--;
+			if(CheckPosition(temp))
+				current.col--;
+			break;
+		case 'w':
+			RotateShape(temp);
+			if(CheckPosition(temp))
+				RotateShape(current);
+			break;
+	}
+}
 int main() {
     srand(time(0));
     final = 0;
-    int c;
+    int input_key;
     initscr();
 	gettimeofday(&before_now, NULL);
 	set_timeout(1);
@@ -132,65 +190,9 @@ int main() {
 	}
     PrintTetris();
 	while(GameOn){
-		if ((c = getch()) != ERR) {
+		if ((input_key = getch()) != ERR) {
 			Struct temp = CopyShape(current);
-			switch(c){
-				case 's':
-					temp.row++;  //move down
-					if(CheckPosition(temp))
-						current.row++;
-					else {
-						int i, j;
-						for(i = 0; i < current.width ;i++){
-							for(j = 0; j < current.width ; j++){
-								if(current.array[i][j])
-									Table[current.row+i][current.col+j] = current.array[i][j];
-							}
-						}
-						int n, m, sum, count=0;
-						for(n=0;n<R;n++){
-							sum = 0;
-							for(m=0;m< C;m++) {
-								sum+=Table[n][m];
-							}
-							if(sum==C){
-								count++;
-								int l, k;
-								for(k = n;k >=1;k--)
-									for(l=0;l<C;l++)
-										Table[k][l]=Table[k-1][l];
-								for(l=0;l<C;l++)
-									Table[k][l]=0;
-								timer-=decrease--;
-							}
-						}
-						final += 100*count;
-						Struct new_shape = CopyShape(StructsArray[rand()%7]);
-						new_shape.col = rand()%(C-new_shape.width+1);
-						new_shape.row = 0;
-						DestroyShape(current);
-						current = new_shape;
-						if(!CheckPosition(current)){
-							GameOn = F;
-						}
-					}
-					break;
-				case 'd':
-					temp.col++;
-					if(CheckPosition(temp))
-						current.col++;
-					break;
-				case 'a':
-					temp.col--;
-					if(CheckPosition(temp))
-						current.col--;
-					break;
-				case 'w':
-					RotateShape(temp);
-					if(CheckPosition(temp))
-						RotateShape(current);
-					break;
-			}
+			ExecuteInputKey(temp,input_key);
 			DestroyShape(temp);
 			PrintTetris();
 		}
