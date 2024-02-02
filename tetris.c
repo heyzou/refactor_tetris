@@ -22,15 +22,65 @@ typedef struct {
 
 Struct current;
 
-const Struct StructsArray[7]= {
-	{(char *[]){(char []){0,1,1},(char []){1,1,0}, (char []){0,0,0}}, 3},
-	{(char *[]){(char []){1,1,0},(char []){0,1,1}, (char []){0,0,0}}, 3},
-	{(char *[]){(char []){0,1,0},(char []){1,1,1}, (char []){0,0,0}}, 3},
-	{(char *[]){(char []){0,0,1},(char []){1,1,1}, (char []){0,0,0}}, 3},
-	{(char *[]){(char []){1,0,0},(char []){1,1,1}, (char []){0,0,0}}, 3},
-	{(char *[]){(char []){1,1},(char []){1,1}}, 2},
-	{(char *[]){(char []){0,0,0,0}, (char []){1,1,1,1}, (char []){0,0,0,0}, (char []){0,0,0,0}}, 4}
+const Struct StructsArray[7] = {
+    // Z字型
+    {
+        (char *[]){
+            (char []){0, 1, 1},
+            (char []){1, 1, 0},
+            (char []){0, 0, 0}
+        }, 3
+    },
+    // 逆Z字型
+    {
+        (char *[]){
+            (char []){1, 1, 0},
+            (char []){0, 1, 1},
+            (char []){0, 0, 0}
+        }, 3
+    },
+    // T字型
+    {
+        (char *[]){
+            (char []){0, 1, 0},
+            (char []){1, 1, 1},
+            (char []){0, 0, 0}
+        }, 3
+    },
+    // 逆L字型
+    {
+        (char *[]){
+            (char []){0, 0, 1},
+            (char []){1, 1, 1},
+            (char []){0, 0, 0}
+        }, 3
+    },
+    // L字型
+    {
+        (char *[]){
+            (char []){1, 0, 0},
+            (char []){1, 1, 1},
+            (char []){0, 0, 0}
+        }, 3
+    },
+    // 正方形
+    {
+        (char *[]){
+            (char []){1, 1},
+            (char []){1, 1}
+        }, 2
+    },
+    // 棒状
+    {
+        (char *[]){
+            (char []){0, 0, 0, 0},
+            (char []){1, 1, 1, 1},
+            (char []){0, 0, 0, 0},
+            (char []){0, 0, 0, 0}
+        }, 4
+    }
 };
+
 
 Struct CopyShape(Struct shape){
 	Struct new_shape = shape;
@@ -173,6 +223,7 @@ void ExecuteInputKey(Struct temp,int input_key){
 			break;
 	}
 }
+
 int main() {
     srand(time(0));
     final = 0;
