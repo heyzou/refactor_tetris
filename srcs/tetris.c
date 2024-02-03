@@ -173,14 +173,14 @@ void InitializeGame(Struct new_shape)
 	gettimeofday(&before_now, NULL);
 	new_shape.col = rand()%(FIELD_COL-new_shape.width+1);
 	new_shape.row = 0;
+	DestroyShape(current);
+	current = new_shape;
 }
 
 int main() {
 	int input_key;
 	Struct new_shape = CopyShape(StructsArray[rand() % 7]);
 	InitializeGame(new_shape);
-	DestroyShape(current);
-	current = new_shape;
 	if(IsValidPisition(current) == false)
 		GameOn = false;
 	PrintTetris();
