@@ -26,7 +26,7 @@ int IsValidPisition(Struct shape){
         for(int cj = 0; cj < shape.width; cj++)
 		{
 			//check if the shape is out of the table or if the shape is overlapping with another shape
-            if((shape.col + cj < 0 || C <= shape.col + cj || shape.row + ri >= R))
+            if((shape.col + cj < 0 || FIELD_COL <= shape.col + cj || shape.row + ri >= FIELD_ROW))
 			{
                 if(array[ri][cj])
                     return F;
@@ -49,17 +49,17 @@ void RotateShape(Struct shape){
 }
 
 void PrintTetris(){
-    char Buffer[R][C] = {0};
+    char Buffer[FIELD_ROW][FIELD_COL] = {0};
     for(int ri = 0; ri < current.width; ri++)
         for(int cj = 0; cj < current.width; cj++)
             if(current.array[ri][cj] == BLOCK )
                 Buffer[current.row+ri][current.col+cj] = current.array[ri][cj];
     clear();
-    for(int cj = 0; cj < C-9; cj++)
+    for(int cj = 0; cj < FIELD_COL-9; cj++)
         printw(" ");
     printw("42 Tetris\n");
-    for(int ri = 0; ri < R; ri++){
-        for(int cj = 0; cj < C; cj++)
+    for(int ri = 0; ri < FIELD_ROW; ri++){
+        for(int cj = 0; cj < FIELD_COL; cj++)
             printw("%c ", (Table[ri][cj] + Buffer[ri][cj])? '#': '.');
         printw("\n");
     }
@@ -81,33 +81,33 @@ int MoveDownFast(Struct temp)
 	temp.row++;  //move down
 	if(IsValidPisition(temp))
 		current.row++;
-	else 
+	else
 	{
 		for(int ri = 0; ri < current.width; ri++)
 			for(int cj = 0; cj < current.width; cj++)
 				if(current.array[ri][cj] == BLOCK)
 					Table[current.row + ri][current.col + cj] = current.array[ri][cj];
 		int sum, full_row=0;
-		for(int rn=0;rn < R;rn++)
+		for(int rn=0;rn < FIELD_ROW;rn++)
 		{
 			sum = 0;
-			for(int cm = 0;cm < C;cm++) 
+			for(int cm = 0;cm < FIELD_COL;cm++)
 				sum+=Table[rn][cm];
-			if(sum == C)// full row
+			if(sum == FIELD_COL)// full row
 			{
 				full_row++;
 				int rk;
 				for(int rk = rn;rk >=1;rk--)
-					for(int cl=0;cl<C;cl++)
+					for(int cl=0;cl<FIELD_COL;cl++)
 						Table[rk][cl]=Table[rk-1][cl];
-				for(int cl=0;cl<C;cl++)
+				for(int cl=0;cl<FIELD_COL;cl++)
 					Table[rk][cl]=0;
 				timer-=decrease--;
 			}
 		}
 		final += 100*full_row;
 		Struct new_shape = CopyShape(StructsArray[rand()%7]);
-		new_shape.col = rand()%(C-new_shape.width+1);
+		new_shape.col = rand()%(FIELD_COL-new_shape.width+1);
 		new_shape.row = 0;
 		DestroyShape(current);
 		current = new_shape;
@@ -142,8 +142,8 @@ void ExecuteInputKey(Struct temp,int input_key){
 }
 
 void PrintGameOverScreen() {
-    for(int ri = 0; ri < R; ri++){
-        for(int cj = 0; cj < C; cj++)
+    for(int ri = 0; ri < FIELD_ROW; ri++){
+        for(int cj = 0; cj < FIELD_COL; cj++)
             printf("%c ", Table[ri][cj] ? '#': '.');
         printf("\n");
     }
@@ -159,7 +159,7 @@ int main() {
 	gettimeofday(&before_now, NULL);
 	set_timeout(1);
 	Struct new_shape = CopyShape(StructsArray[rand()%7]);
-    new_shape.col = rand()%(C-new_shape.width+1);
+    new_shape.col = rand()%(FIELD_COL-new_shape.width+1);
     new_shape.row = 0;
     DestroyShape(current);
 	current = new_shape;
