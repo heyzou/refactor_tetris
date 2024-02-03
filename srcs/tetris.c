@@ -67,7 +67,7 @@ void PrintTetris(){
 }
 
 struct timeval before_now, now;
-int hasToUpdate(){
+int isUpdateRequired(){
 	suseconds_t current_timestamp = (suseconds_t)(now.tv_sec * 1000000 + now.tv_usec);
 	suseconds_t previous_timestamp = (suseconds_t)(before_now.tv_sec * 1000000 + before_now.tv_usec);
 
@@ -176,7 +176,7 @@ int main() {
 		if (input_key != ERR)
 			ExecuteInputKey(temp,input_key);
 		gettimeofday(&now, NULL);
-		if (hasToUpdate())
+		if (isUpdateRequired())
 		{
 			MoveDownFast(temp);
 			gettimeofday(&before_now, NULL);
