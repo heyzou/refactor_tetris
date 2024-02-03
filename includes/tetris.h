@@ -81,3 +81,11 @@ const Struct StructsArray[7] = {
         }, 4
     }
 };
+
+Struct CopyShape(Struct shape);
+
+int MoveDownFast(Struct temp);
+void ExecuteInputKey(Struct temp,int input_key);
+void DestroyShape(Struct shape);
+int IsValidPisition(Struct shape);
+void RotateShape(Struct shape);
