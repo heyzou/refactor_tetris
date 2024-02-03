@@ -144,12 +144,16 @@ void ExecuteInputKey(Struct temp,int input_key){
 	}
 }
 
-void PrintGameOverScreen() {
+void displayTable() {
 	for(int ri = 0; ri < FIELD_ROW; ri++){
 		for(int cj = 0; cj < FIELD_COL; cj++)
 			printf("%c ", Table[ri][cj] ? '#': '.');
 		printf("\n");
 	}
+}
+
+void PrintGameOverScreen() {
+	displayTable();
 	printf("\nGame over!\n");
 	printf("\nScore: %d\n", final);
 }
