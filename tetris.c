@@ -1,96 +1,14 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <time.h>
-#include <sys/time.h>
-#include <ncurses.h>
-
-#define R 20
-#define C 15
-#define T 1
-#define F 0
-
-char Table[R][C] = {0};
-int final = 0;
-char GameOn = T;
-suseconds_t timer = 400000;
-int decrease = 1000;
-
-typedef struct {
-    char **array;
-    int width, row, col;
-} Struct;
-
-Struct current;
-
-const Struct StructsArray[7] = {
-    // Z字型
-    {
-        (char *[]){
-            (char []){0, 1, 1},
-            (char []){1, 1, 0},
-            (char []){0, 0, 0}
-        }, 3
-    },
-    // 逆Z字型
-    {
-        (char *[]){
-            (char []){1, 1, 0},
-            (char []){0, 1, 1},
-            (char []){0, 0, 0}
-        }, 3
-    },
-    // T字型
-    {
-        (char *[]){
-            (char []){0, 1, 0},
-            (char []){1, 1, 1},
-            (char []){0, 0, 0}
-        }, 3
-    },
-    // 逆L字型
-    {
-        (char *[]){
-            (char []){0, 0, 1},
-            (char []){1, 1, 1},
-            (char []){0, 0, 0}
-        }, 3
-    },
-    // L字型
-    {
-        (char *[]){
-            (char []){1, 0, 0},
-            (char []){1, 1, 1},
-            (char []){0, 0, 0}
-        }, 3
-    },
-    // 正方形
-    {
-        (char *[]){
-            (char []){1, 1},
-            (char []){1, 1}
-        }, 2
-    },
-    // 棒状
-    {
-        (char *[]){
-            (char []){0, 0, 0, 0},
-            (char []){1, 1, 1, 1},
-            (char []){0, 0, 0, 0},
-            (char []){0, 0, 0, 0}
-        }, 4
-    }
-};
-
+#include "tetris.h"
 
 Struct CopyShape(Struct shape){
 	Struct new_shape = shape;
 	char **copyshape = shape.array;
 	new_shape.array = (char**)malloc(new_shape.width*sizeof(char*));
-    int i, j;
-    for(i = 0; i < new_shape.width; i++){
-		new_shape.array[i] = (char*)malloc(new_shape.width*sizeof(char));
-		for(j=0; j < new_shape.width; j++) {
-			new_shape.array[i][j] = copyshape[i][j];
+    int ri, cj;
+    for(ri = 0; ri < new_shape.width; ri++){
+		new_shape.array[ri] = (char*)malloc(new_shape.width*sizeof(char));
+		for(cj=0; cj < new_shape.width; cj++) {
+			new_shape.array[ri][cj] = copyshape[ri][cj];
 		}
     }
     return new_shape;
@@ -104,20 +22,24 @@ void DestroyShape(Struct shape){
     free(shape.array);
 }
 
-int CheckPosition(Struct shape){
-	char **array = shape.array;
-	int i, j;
-	for(i = 0; i < shape.width;i++) {
-		for(j = 0; j < shape.width ;j++){
-			if((shape.col+j < 0 || shape.col+j >= C || shape.row+i >= R)){
-				if(array[i][j])
-					return F;	
-			}
-			else if(Table[shape.row+i][shape.col+j] && array[i][j])
-				return F;
-		}
-	}
-	return T;
+int IsValidPisition(Struct shape){
+    char **array = shape.array;
+    int ri, cj;
+    for(ri = 0; ri < shape.width; ri++)
+	{
+        for(cj = 0; cj < shape.width; cj++)
+		{
+			//check if the shape is out of the table or if the shape is overlapping with another shape
+            if((shape.col + cj < 0 || C <= shape.col + cj || shape.row + ri >= R))
+			{
+                if(array[ri][cj])
+                    return F;
+            }
+            else if(Table[shape.row + ri][shape.col + cj] && array[ri][cj])
+                return F;
+        }
+    }
+    return T;
 }
 
 void RotateShape(Struct shape){
@@ -133,25 +55,25 @@ void RotateShape(Struct shape){
 }
 
 void PrintTetris(){
-	char Buffer[R][C] = {0};
-	int i, j;
-	for(i = 0; i < current.width ;i++){
-		for(j = 0; j < current.width ; j++){
-			if(current.array[i][j])
-				Buffer[current.row+i][current.col+j] = current.array[i][j];
-		}
-	}
-	clear();
-	for(i=0; i<C-9; i++)
-		printw(" ");
-	printw("42 Tetris\n");
-	for(i = 0; i < R ;i++){
-		for(j = 0; j < C ; j++){
-			printw("%c ", (Table[i][j] + Buffer[i][j])? '#': '.');
-		}
-		printw("\n");
-	}
-	printw("\nScore: %d\n", final);
+    char Buffer[R][C] = {0};
+    int ri, cj;
+    for(ri = 0; ri < current.width; ri++){
+        for(cj = 0; cj < current.width; cj++){
+            if(current.array[ri][cj] == BLOCK )
+                Buffer[current.row+ri][current.col+cj] = current.array[ri][cj];
+        }
+    }
+    clear();
+    for(cj = 0; cj < C-9; cj++)
+        printw(" ");
+    printw("42 Tetris\n");
+    for(ri = 0; ri < R; ri++){
+        for(cj = 0; cj < C; cj++){
+            printw("%c ", (Table[ri][cj] + Buffer[ri][cj])? '#': '.');
+        }
+        printw("\n");
+    }
+    printw("\nScore: %d\n", final);
 }
 
 struct timeval before_now, now;
@@ -164,64 +86,84 @@ void set_timeout(int time) {
 	timeout(1);
 }
 
+int MoveDownFast(Struct temp)
+{
+	temp.row++;  //move down
+	if(IsValidPisition(temp))
+		current.row++;
+	else 
+	{
+		int ri, cj;
+		for(ri = 0; ri < current.width; ri++) {
+			for(cj = 0; cj < current.width; cj++) {
+				if(current.array[ri][cj] == BLOCK)
+					Table[current.row + ri][current.col + cj] = current.array[ri][cj];
+			}
+		}
+		int rn, cm, sum, full_row=0;
+		for(rn=0;rn<R;rn++)
+		{
+			sum = 0;
+			for(cm=0;cm< C;cm++) 
+				sum+=Table[rn][cm];
+			if(sum == C)// full row
+			{
+				full_row++;
+				int cl, rk;
+				for(rk = rn;rk >=1;rk--)
+					for(cl=0;cl<C;cl++)
+						Table[rk][cl]=Table[rk-1][cl];
+				for(cl=0;cl<C;cl++)
+					Table[rk][cl]=0;
+				timer-=decrease--;
+			}
+		}
+		final += 100*full_row;
+		Struct new_shape = CopyShape(StructsArray[rand()%7]);
+		new_shape.col = rand()%(C-new_shape.width+1);
+		new_shape.row = 0;
+		DestroyShape(current);
+		current = new_shape;
+		if(!IsValidPisition(current))
+			GameOn = F;
+		return full_row;
+	}
+	return 0;
+}
+
 void ExecuteInputKey(Struct temp,int input_key){
 	switch(input_key){
 		case 's':
-			temp.row++;  //move down
-			if(CheckPosition(temp))
-				current.row++;
-			else {
-				int i, j;
-				for(i = 0; i < current.width ;i++){
-					for(j = 0; j < current.width ; j++){
-						if(current.array[i][j])
-							Table[current.row+i][current.col+j] = current.array[i][j];
-					}
-				}
-				int n, m, sum, count=0;
-				for(n=0;n<R;n++){
-					sum = 0;
-					for(m=0;m< C;m++) {
-						sum+=Table[n][m];
-					}
-					if(sum==C){
-						count++;
-						int l, k;
-						for(k = n;k >=1;k--)
-							for(l=0;l<C;l++)
-								Table[k][l]=Table[k-1][l];
-						for(l=0;l<C;l++)
-							Table[k][l]=0;
-						timer-=decrease--;
-					}
-				}
-				final += 100*count;
-				Struct new_shape = CopyShape(StructsArray[rand()%7]);
-				new_shape.col = rand()%(C-new_shape.width+1);
-				new_shape.row = 0;
-				DestroyShape(current);
-				current = new_shape;
-				if(!CheckPosition(current)){
-					GameOn = F;
-				}
-			}
+			MoveDownFast(temp);
 			break;
 		case 'd':
 			temp.col++;
-			if(CheckPosition(temp))
+			if(IsValidPisition(temp))
 				current.col++;
 			break;
 		case 'a':
 			temp.col--;
-			if(CheckPosition(temp))
+			if(IsValidPisition(temp))
 				current.col--;
 			break;
 		case 'w':
 			RotateShape(temp);
-			if(CheckPosition(temp))
+			if(IsValidPisition(temp))
 				RotateShape(current);
 			break;
 	}
+}
+
+void PrintGameOverScreen() {
+    int ri, cj;
+    for(ri = 0; ri < R; ri++){
+        for(cj = 0; cj < C; cj++){
+            printf("%c ", Table[ri][cj] ? '#': '.');
+        }
+        printf("\n");
+    }
+    printf("\nGame over!\n");
+    printf("\nScore: %d\n", final);
 }
 
 int main() {
@@ -236,91 +178,28 @@ int main() {
     new_shape.row = 0;
     DestroyShape(current);
 	current = new_shape;
-	if(!CheckPosition(current)){
+	if(!IsValidPisition(current))
 		GameOn = F;
-	}
     PrintTetris();
-	while(GameOn){
-		if ((input_key = getch()) != ERR) {
-			Struct temp = CopyShape(current);
+	while(GameOn)
+	{
+		input_key = getch();
+		Struct temp = CopyShape(current);
+		if (input_key != ERR)
+		{
 			ExecuteInputKey(temp,input_key);
-			DestroyShape(temp);
-			PrintTetris();
 		}
 		gettimeofday(&now, NULL);
-		if (hasToUpdate()) {
-			Struct temp = CopyShape(current);
-			switch('s'){
-				case 's':
-					temp.row++;
-					if(CheckPosition(temp))
-						current.row++;
-					else {
-						int i, j;
-						for(i = 0; i < current.width ;i++){
-							for(j = 0; j < current.width ; j++){
-								if(current.array[i][j])
-									Table[current.row+i][current.col+j] = current.array[i][j];
-							}
-						}
-						int n, m, sum, count=0;
-						for(n=0;n<R;n++){
-							sum = 0;
-							for(m=0;m< C;m++) {
-								sum+=Table[n][m];
-							}
-							if(sum==C){
-								count++;
-								int l, k;
-								for(k = n;k >=1;k--)
-									for(l=0;l<C;l++)
-										Table[k][l]=Table[k-1][l];
-								for(l=0;l<C;l++)
-									Table[k][l]=0;
-								timer-=decrease--;
-							}
-						}
-						Struct new_shape = CopyShape(StructsArray[rand()%7]);
-						new_shape.col = rand()%(C-new_shape.width+1);
-						new_shape.row = 0;
-						DestroyShape(current);
-						current = new_shape;
-						if(!CheckPosition(current)){
-							GameOn = F;
-						}
-					}
-					break;
-				case 'd':
-					temp.col++;
-					if(CheckPosition(temp))
-						current.col++;
-					break;
-				case 'a':
-					temp.col--;
-					if(CheckPosition(temp))
-						current.col--;
-					break;
-				case 'w':
-					RotateShape(temp);
-					if(CheckPosition(temp))
-						RotateShape(current);
-					break;
-			}
-			DestroyShape(temp);
-			PrintTetris();
+		if (hasToUpdate())
+		{
+			MoveDownFast(temp);
 			gettimeofday(&before_now, NULL);
 		}
+		DestroyShape(temp);
+		PrintTetris();
 	}
 	DestroyShape(current);
 	endwin();
-	int i, j;
-	for(i = 0; i < R ;i++){
-		for(j = 0; j < C ; j++){
-			printf("%c ", Table[i][j] ? '#': '.');
-		}
-		printf("\n");
-	}
-	printf("\nGame over!\n");
-	printf("\nScore: %d\n", final);
+	PrintGameOverScreen();
     return 0;
 }
