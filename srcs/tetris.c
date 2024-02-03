@@ -4,29 +4,26 @@ Struct CopyShape(Struct shape){
 	Struct new_shape = shape;
 	char **copyshape = shape.array;
 	new_shape.array = (char**)malloc(new_shape.width*sizeof(char*));
-    int ri, cj;
-    for(ri = 0; ri < new_shape.width; ri++)
+    for(int ri = 0; ri < new_shape.width; ri++)
 	{
 		new_shape.array[ri] = (char*)malloc(new_shape.width*sizeof(char));
-		for(cj=0; cj < new_shape.width; cj++)
+		for(int cj = 0; cj < new_shape.width; cj++)
 			new_shape.array[ri][cj] = copyshape[ri][cj];
     }
     return new_shape;
 }
 
 void DestroyShape(Struct shape){
-    int i;
-    for(i = 0; i < shape.width; i++)
+    for(int i = 0; i < shape.width; i++)
 		free(shape.array[i]);
     free(shape.array);
 }
 
 int IsValidPisition(Struct shape){
     char **array = shape.array;
-    int ri, cj;
-    for(ri = 0; ri < shape.width; ri++)
+    for(int ri = 0; ri < shape.width; ri++)
 	{
-        for(cj = 0; cj < shape.width; cj++)
+        for(int cj = 0; cj < shape.width; cj++)
 		{
 			//check if the shape is out of the table or if the shape is overlapping with another shape
             if((shape.col + cj < 0 || C <= shape.col + cj || shape.row + ri >= R))
@@ -43,29 +40,26 @@ int IsValidPisition(Struct shape){
 
 void RotateShape(Struct shape){
 	Struct temp = CopyShape(shape);
-	int i, j, k, width;
+	int k, width;
 	width = shape.width;
-	for(i = 0; i < width ; i++)
-	{
-		for(j = 0, k = width-1; j < width ; j++, k--)
+	for(int i = 0; i < width ; i++)
+		for(int j = 0, k = width-1; j < width ; j++, k--)
 				shape.array[i][j] = temp.array[k][i];
-	}
 	DestroyShape(temp);
 }
 
 void PrintTetris(){
     char Buffer[R][C] = {0};
-    int ri, cj;
-    for(ri = 0; ri < current.width; ri++)
-        for(cj = 0; cj < current.width; cj++)
+    for(int ri = 0; ri < current.width; ri++)
+        for(int cj = 0; cj < current.width; cj++)
             if(current.array[ri][cj] == BLOCK )
                 Buffer[current.row+ri][current.col+cj] = current.array[ri][cj];
     clear();
-    for(cj = 0; cj < C-9; cj++)
+    for(int cj = 0; cj < C-9; cj++)
         printw(" ");
     printw("42 Tetris\n");
-    for(ri = 0; ri < R; ri++){
-        for(cj = 0; cj < C; cj++)
+    for(int ri = 0; ri < R; ri++){
+        for(int cj = 0; cj < C; cj++)
             printw("%c ", (Table[ri][cj] + Buffer[ri][cj])? '#': '.');
         printw("\n");
     }
@@ -89,25 +83,24 @@ int MoveDownFast(Struct temp)
 		current.row++;
 	else 
 	{
-		int ri, cj;
-		for(ri = 0; ri < current.width; ri++)
-			for(cj = 0; cj < current.width; cj++)
+		for(int ri = 0; ri < current.width; ri++)
+			for(int cj = 0; cj < current.width; cj++)
 				if(current.array[ri][cj] == BLOCK)
 					Table[current.row + ri][current.col + cj] = current.array[ri][cj];
-		int rn, cm, sum, full_row=0;
-		for(rn=0;rn<R;rn++)
+		int sum, full_row=0;
+		for(int rn=0;rn < R;rn++)
 		{
 			sum = 0;
-			for(cm=0;cm< C;cm++) 
+			for(int cm = 0;cm < C;cm++) 
 				sum+=Table[rn][cm];
 			if(sum == C)// full row
 			{
 				full_row++;
-				int cl, rk;
-				for(rk = rn;rk >=1;rk--)
-					for(cl=0;cl<C;cl++)
+				int rk;
+				for(int rk = rn;rk >=1;rk--)
+					for(int cl=0;cl<C;cl++)
 						Table[rk][cl]=Table[rk-1][cl];
-				for(cl=0;cl<C;cl++)
+				for(int cl=0;cl<C;cl++)
 					Table[rk][cl]=0;
 				timer-=decrease--;
 			}
@@ -149,9 +142,8 @@ void ExecuteInputKey(Struct temp,int input_key){
 }
 
 void PrintGameOverScreen() {
-    int ri, cj;
-    for(ri = 0; ri < R; ri++){
-        for(cj = 0; cj < C; cj++)
+    for(int ri = 0; ri < R; ri++){
+        for(int cj = 0; cj < C; cj++)
             printf("%c ", Table[ri][cj] ? '#': '.');
         printf("\n");
     }
