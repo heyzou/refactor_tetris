@@ -94,27 +94,29 @@ int MoveDownFast(Struct temp)
 	else
 	{
 		updateTableWithCurrent();
-		int sum, full_row=0;
-		for(int rn=0;rn < FIELD_ROW;rn++)
+		int row_block_num, full_row = 0;
+		for(int rn = 0;rn < FIELD_ROW;rn++)
 		{
-			sum = 0;
-			for(int cm = 0;cm < FIELD_COL;cm++)
-				sum+=Table[rn][cm];
-			if(sum == FIELD_COL)// full row
+			row_block_num = 0;
+			for(int cm = 0; cm < FIELD_COL; cm++)
+				row_block_num += (int)Table[rn][cm];
+			if(row_block_num == FIELD_COL)// full row
 			{
+				
 				full_row++;
 				int rk;
-				for(int rk = rn;rk >=1;rk--)
-					for(int cl=0;cl<FIELD_COL;cl++)
-						Table[rk][cl]=Table[rk-1][cl];
-				for(int cl=0;cl<FIELD_COL;cl++)
-					Table[rk][cl]=0;
-				timer-=decrease--;
+				for(int rk = rn; rk >= 1; rk--)
+					for(int cl = 0; cl < FIELD_COL; cl++)
+						Table[rk][cl] = Table[rk - 1][cl];
+				for(int cl = 0; cl < FIELD_COL; cl++)
+					Table[rk][cl] = 0;
+				timer -= decrease;
+				decrease--;
 			}
 		}
-		final += 100*full_row;
+		final += 100 * full_row;
 		Struct new_shape = CopyShape(StructsArray[rand()%7]);
-		new_shape.col = rand()%(FIELD_COL-new_shape.width+1);
+		new_shape.col = rand()%(FIELD_COL - new_shape.width + 1);
 		new_shape.row = 0;
 		DestroyShape(current);
 		current = new_shape;
