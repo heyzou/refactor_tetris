@@ -6,8 +6,7 @@ FLAGS		=
 RM			=	rm -rf
 
 SRC_DIR		=	srcs
-SRC			=	tetris.c \
-				ExecuteInputKey.c
+SRC			=	tetris.c
 
 SRCS	= $(addprefix $(SRC_DIR)/, $(SRC))
 
