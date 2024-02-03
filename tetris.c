@@ -5,20 +5,19 @@ Struct CopyShape(Struct shape){
 	char **copyshape = shape.array;
 	new_shape.array = (char**)malloc(new_shape.width*sizeof(char*));
     int ri, cj;
-    for(ri = 0; ri < new_shape.width; ri++){
+    for(ri = 0; ri < new_shape.width; ri++)
+	{
 		new_shape.array[ri] = (char*)malloc(new_shape.width*sizeof(char));
-		for(cj=0; cj < new_shape.width; cj++) {
+		for(cj=0; cj < new_shape.width; cj++)
 			new_shape.array[ri][cj] = copyshape[ri][cj];
-		}
     }
     return new_shape;
 }
 
 void DestroyShape(Struct shape){
     int i;
-    for(i = 0; i < shape.width; i++){
+    for(i = 0; i < shape.width; i++)
 		free(shape.array[i]);
-    }
     free(shape.array);
 }
 
@@ -46,10 +45,10 @@ void RotateShape(Struct shape){
 	Struct temp = CopyShape(shape);
 	int i, j, k, width;
 	width = shape.width;
-	for(i = 0; i < width ; i++){
-		for(j = 0, k = width-1; j < width ; j++, k--){
+	for(i = 0; i < width ; i++)
+	{
+		for(j = 0, k = width-1; j < width ; j++, k--)
 				shape.array[i][j] = temp.array[k][i];
-		}
 	}
 	DestroyShape(temp);
 }
@@ -57,20 +56,17 @@ void RotateShape(Struct shape){
 void PrintTetris(){
     char Buffer[R][C] = {0};
     int ri, cj;
-    for(ri = 0; ri < current.width; ri++){
-        for(cj = 0; cj < current.width; cj++){
+    for(ri = 0; ri < current.width; ri++)
+        for(cj = 0; cj < current.width; cj++)
             if(current.array[ri][cj] == BLOCK )
                 Buffer[current.row+ri][current.col+cj] = current.array[ri][cj];
-        }
-    }
     clear();
     for(cj = 0; cj < C-9; cj++)
         printw(" ");
     printw("42 Tetris\n");
     for(ri = 0; ri < R; ri++){
-        for(cj = 0; cj < C; cj++){
+        for(cj = 0; cj < C; cj++)
             printw("%c ", (Table[ri][cj] + Buffer[ri][cj])? '#': '.');
-        }
         printw("\n");
     }
     printw("\nScore: %d\n", final);
@@ -94,12 +90,10 @@ int MoveDownFast(Struct temp)
 	else 
 	{
 		int ri, cj;
-		for(ri = 0; ri < current.width; ri++) {
-			for(cj = 0; cj < current.width; cj++) {
+		for(ri = 0; ri < current.width; ri++)
+			for(cj = 0; cj < current.width; cj++)
 				if(current.array[ri][cj] == BLOCK)
 					Table[current.row + ri][current.col + cj] = current.array[ri][cj];
-			}
-		}
 		int rn, cm, sum, full_row=0;
 		for(rn=0;rn<R;rn++)
 		{
@@ -157,9 +151,8 @@ void ExecuteInputKey(Struct temp,int input_key){
 void PrintGameOverScreen() {
     int ri, cj;
     for(ri = 0; ri < R; ri++){
-        for(cj = 0; cj < C; cj++){
+        for(cj = 0; cj < C; cj++)
             printf("%c ", Table[ri][cj] ? '#': '.');
-        }
         printf("\n");
     }
     printf("\nGame over!\n");
@@ -186,9 +179,7 @@ int main() {
 		input_key = getch();
 		Struct temp = CopyShape(current);
 		if (input_key != ERR)
-		{
 			ExecuteInputKey(temp,input_key);
-		}
 		gettimeofday(&now, NULL);
 		if (hasToUpdate())
 		{
