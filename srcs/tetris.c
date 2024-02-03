@@ -162,19 +162,24 @@ void PrintGameOverScreen() {
 	printf("\nScore: %d\n", final);
 }
 
-int main() {
-	srand(time(0));
+void InitializeGame(Struct new_shape)
+{
 	final = 0;
-	int input_key;
 	initscr();
-	gettimeofday(&before_now, NULL);
+	srand(time(0));
 	set_timeout(1);
-	Struct new_shape = CopyShape(StructsArray[rand()%7]);
+	gettimeofday(&before_now, NULL);
 	new_shape.col = rand()%(FIELD_COL-new_shape.width+1);
 	new_shape.row = 0;
+}
+
+int main() {
+	int input_key;
+	Struct new_shape = CopyShape(StructsArray[rand() % 7]);
+	InitializeGame(new_shape);
 	DestroyShape(current);
 	current = new_shape;
-	if(!IsValidPisition(current))
+	if(IsValidPisition(current) == false)
 		GameOn = false;
 	PrintTetris();
 	while(GameOn)
