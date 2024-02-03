@@ -114,7 +114,7 @@ int MoveDownFast(Struct temp)
 				decrease--;
 			}
 		}
-		final += 100 * full_row;
+		final += 100 * FIELD_COL * full_row;
 		Struct new_shape = CopyShape(StructsArray[rand()%7]);
 		new_shape.col = rand()%(FIELD_COL - new_shape.width + 1);
 		new_shape.row = 0;
