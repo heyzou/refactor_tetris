@@ -79,6 +79,13 @@ void set_timeout(int time) {
 	timeout(1);
 }
 
+void updateTableWithCurrent() {
+	for(int ri = 0; ri < current.width; ri++)
+		for(int cj = 0; cj < current.width; cj++)
+			if(current.array[ri][cj] == true)
+				Table[current.row + ri][current.col + cj] = current.array[ri][cj];
+}
+
 int MoveDownFast(Struct temp)
 {
 	temp.row++;  //move down
@@ -86,10 +93,7 @@ int MoveDownFast(Struct temp)
 		current.row++;
 	else
 	{
-		for(int ri = 0; ri < current.width; ri++)
-			for(int cj = 0; cj < current.width; cj++)
-				if(current.array[ri][cj] == true)
-					Table[current.row + ri][current.col + cj] = current.array[ri][cj];
+		updateTableWithCurrent();
 		int sum, full_row=0;
 		for(int rn=0;rn < FIELD_ROW;rn++)
 		{
