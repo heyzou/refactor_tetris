@@ -2,13 +2,14 @@
 
 Struct CopyShape(Struct shape){
 	Struct new_shape = shape;
-	char **copyshape = shape.array;
-	new_shape.array = (char**)malloc(new_shape.width*sizeof(char*));
+	new_shape.array = malloc(new_shape.width*sizeof(char*));
+	if (new_shape.array == NULL)
+		exit(1);
 	for(int ri = 0; ri < new_shape.width; ri++)
 	{
 		new_shape.array[ri] = (char*)malloc(new_shape.width*sizeof(char));
 		for(int cj = 0; cj < new_shape.width; cj++)
-			new_shape.array[ri][cj] = copyshape[ri][cj];
+			new_shape.array[ri][cj] = shape.array[ri][cj];
 	}
 	return new_shape;
 }
@@ -40,10 +41,9 @@ int IsValidPisition(Struct shape){
 
 void RotateShape(Struct shape){
 	Struct temp = CopyShape(shape);
-	int k, width;
-	width = shape.width;
+	int width = shape.width;
 	for(int i = 0; i < width ; i++)
-		for(int j = 0, k = width-1; j < width ; j++, k--)
+		for(int j = 0, k = width - 1; j < width ; j++, k--)
 				shape.array[i][j] = temp.array[k][i];
 	DestroyShape(temp);
 }
@@ -53,7 +53,7 @@ void PrintTetris(){
 	for(int ri = 0; ri < current.width; ri++)
 		for(int cj = 0; cj < current.width; cj++)
 			if(current.array[ri][cj] == true)
-				Buffer[current.row+ri][current.col+cj] = current.array[ri][cj];
+				Buffer[current.row + ri][current.col + cj] = current.array[ri][cj];
 	clear();
 	for(int cj = 0; cj < FIELD_COL-9; cj++)
 		printw(" ");
@@ -68,7 +68,10 @@ void PrintTetris(){
 
 struct timeval before_now, now;
 int hasToUpdate(){
-	return ((suseconds_t)(now.tv_sec * 1000000 + now.tv_usec) -((suseconds_t)before_now.tv_sec * 1000000 + before_now.tv_usec)) > timer;
+	suseconds_t current_timestamp = (suseconds_t)(now.tv_sec * 1000000 + now.tv_usec);
+	suseconds_t previous_timestamp = (suseconds_t)(before_now.tv_sec * 1000000 + before_now.tv_usec);
+
+	return ((current_timestamp - previous_timestamp) > timer);
 }
 
 void set_timeout(int time) {
