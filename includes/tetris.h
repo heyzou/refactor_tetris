@@ -6,13 +6,10 @@
 
 #define FIELD_ROW 20
 #define FIELD_COL 15
-#define T 1
-#define BLOCK 1
-#define F 0
 
 char Table[FIELD_ROW][FIELD_COL] = {0};
 int final = 0;
-char GameOn = T;
+char GameOn = true;
 suseconds_t timer = 400000;
 int decrease = 1000;
 
