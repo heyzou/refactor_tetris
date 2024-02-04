@@ -1,19 +1,14 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <time.h>
-#include <sys/time.h>
 #include <ncurses.h>
+
+#include "timer_config.h"
 
 #define FIELD_ROW 20
 #define FIELD_COL 15
 
 int final = 0;
 char GameOn = true;
-
-typedef struct {
-    suseconds_t initialTimer;
-    int decreaseRate;
-} TimerInfo;
 
 typedef struct {
     char **array;

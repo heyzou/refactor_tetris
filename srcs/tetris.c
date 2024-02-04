@@ -180,7 +180,7 @@ void InitializeGame(Struct new_shape)
 int main() {
 	int input_key;
 	char Table[FIELD_ROW][FIELD_COL] = {0};
-	TimerInfo gameTimerConfig = {.initialTimer = 400000, .decreaseRate = 1000};
+	TimerInfo gameTimerConfig = {.initialTimer = Initial_Timer_Value, .decreaseRate = Decrease_Rate_Value};
 	Struct new_shape = CopyShape(StructsArray[rand() % 7]);
 	InitializeGame(new_shape);
 	if(IsValidPisition(current, Table) == false)
