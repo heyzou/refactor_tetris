@@ -1,7 +1,5 @@
 #include "tetris.h"
 
-TimerInfo gameTimerConfig = {.initialTimer = 400000, .decreaseRate = 1000};
-
 Struct CopyShape(Struct shape){
 	Struct new_shape = shape;
 	new_shape.array = malloc(new_shape.width*sizeof(char*));
@@ -69,7 +67,7 @@ void PrintTetris(char Table[FIELD_ROW][FIELD_COL]){
 }
 
 struct timeval before_now, now;
-int isUpdateRequired(){
+int isUpdateRequired(TimerInfo gameTimerConfig){
 	suseconds_t current_timestamp = (suseconds_t)(now.tv_sec * 1000000 + now.tv_usec);
 	suseconds_t previous_timestamp = (suseconds_t)(before_now.tv_sec * 1000000 + before_now.tv_usec);
 
@@ -88,7 +86,7 @@ void updateTableWithCurrent(char Table[FIELD_ROW][FIELD_COL]) {
 				Table[current.row + ri][current.col + cj] = current.array[ri][cj];
 }
 
-int MoveDownFast(Struct temp, char Table[FIELD_ROW][FIELD_COL])
+int MoveDownFast(Struct temp, char Table[FIELD_ROW][FIELD_COL], TimerInfo gameTimerConfig)
 {
 	temp.row++;  //move down
 	if(IsValidPisition(temp, Table))
@@ -129,10 +127,10 @@ int MoveDownFast(Struct temp, char Table[FIELD_ROW][FIELD_COL])
 	return 0;
 }
 
-void ExecuteInputKey(Struct temp,int input_key, char Table[FIELD_ROW][FIELD_COL]){
+void ExecuteInputKey(Struct temp,int input_key, char Table[FIELD_ROW][FIELD_COL], TimerInfo gameTimerConfig){
 	switch(input_key){
 		case 's':
-			MoveDownFast(temp, Table);
+			MoveDownFast(temp, Table, gameTimerConfig);
 			break;
 		case 'd':
 			temp.col++;
@@ -182,6 +180,7 @@ void InitializeGame(Struct new_shape)
 int main() {
 	int input_key;
 	char Table[FIELD_ROW][FIELD_COL] = {0};
+	TimerInfo gameTimerConfig = {.initialTimer = 400000, .decreaseRate = 1000};
 	Struct new_shape = CopyShape(StructsArray[rand() % 7]);
 	InitializeGame(new_shape);
 	if(IsValidPisition(current, Table) == false)
@@ -192,11 +191,11 @@ int main() {
 		input_key = getch();
 		Struct temp = CopyShape(current);
 		if (input_key != ERR)
-			ExecuteInputKey(temp,input_key, Table);
+			ExecuteInputKey(temp,input_key, Table, gameTimerConfig);
 		gettimeofday(&now, NULL);
-		if (isUpdateRequired())
+		if (isUpdateRequired(gameTimerConfig))
 		{
-			MoveDownFast(temp, Table);
+			MoveDownFast(temp, Table, gameTimerConfig);
 			gettimeofday(&before_now, NULL);
 		}
 		DestroyShape(temp);
