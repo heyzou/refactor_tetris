@@ -3,6 +3,7 @@
 #include <ncurses.h>
 
 #include "timer_config.h"
+#include "tetromino.h"
 
 #define FIELD_ROW 20
 #define FIELD_COL 15
@@ -10,76 +11,10 @@
 int final = 0;
 char GameOn = true;
 
-typedef struct {
-    char **array;
-    int width, row, col;
-} Struct;
+// Tetromino CopyShape(Tetromino shape);
 
-Struct current;
-
-const Struct StructsArray[7] = {
-    // Z-shaped block
-    {
-        (char *[]){
-            (char []){0, 1, 1},
-            (char []){1, 1, 0},
-            (char []){0, 0, 0}
-        }, 3
-    },
-    // Reverse Z-shaped block
-    {
-        (char *[]){
-            (char []){1, 1, 0},
-            (char []){0, 1, 1},
-            (char []){0, 0, 0}
-        }, 3
-    },
-    // T-shaped block
-    {
-        (char *[]){
-            (char []){0, 1, 0},
-            (char []){1, 1, 1},
-            (char []){0, 0, 0}
-        }, 3
-    },
-    // Reverse L-shaped block
-    {
-        (char *[]){
-            (char []){0, 0, 1},
-            (char []){1, 1, 1},
-            (char []){0, 0, 0}
-        }, 3
-    },
-    // L-shaped block
-    {
-        (char *[]){
-            (char []){1, 0, 0},
-            (char []){1, 1, 1},
-            (char []){0, 0, 0}
-        }, 3
-    },
-    // Square block
-    {
-        (char *[]){
-            (char []){1, 1},
-            (char []){1, 1}
-        }, 2
-    },
-    // Line block
-    {
-        (char *[]){
-            (char []){0, 0, 0, 0},
-            (char []){1, 1, 1, 1},
-            (char []){0, 0, 0, 0},
-            (char []){0, 0, 0, 0}
-        }, 4
-    }
-};
-
-// Struct CopyShape(Struct shape);
-
-// int MoveDownFast(Struct temp);
-// void ExecuteInputKey(Struct temp,int input_key);
-// void DestroyShape(Struct shape);
-// int IsValidPisition(Struct shape);
-// void RotateShape(Struct shape);
+// int MoveDownFast(Tetromino temp);
+// void ExecuteInputKey(Tetromino temp,int input_key);
+// void DestroyShape(Tetromino shape);
+// int IsValidPisition(Tetromino shape);
+// void RotateShape(Tetromino shape);

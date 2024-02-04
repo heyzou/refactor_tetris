@@ -1,7 +1,7 @@
 #include "tetris.h"
 
-Struct CopyShape(Struct shape){
-	Struct new_shape = shape;
+Tetromino CopyShape(Tetromino shape){
+	Tetromino new_shape = shape;
 	new_shape.array = malloc(new_shape.width*sizeof(char*));
 	if (new_shape.array == NULL)
 		exit(1);
@@ -14,13 +14,13 @@ Struct CopyShape(Struct shape){
 	return new_shape;
 }
 
-void DestroyShape(Struct shape){
+void DestroyShape(Tetromino shape){
 	for(int i = 0; i < shape.width; i++)
 		free(shape.array[i]);
 	free(shape.array);
 }
 
-int IsValidPisition(Struct shape, char Table[FIELD_ROW][FIELD_COL]){
+int IsValidPisition(Tetromino shape, char Table[FIELD_ROW][FIELD_COL]){
 	char **array = shape.array;
 	for(int ri = 0; ri < shape.width; ri++)
 	{
@@ -39,8 +39,8 @@ int IsValidPisition(Struct shape, char Table[FIELD_ROW][FIELD_COL]){
 	return true;
 }
 
-void RotateShape(Struct shape){
-	Struct temp = CopyShape(shape);
+void RotateShape(Tetromino shape){
+	Tetromino temp = CopyShape(shape);
 	int width = shape.width;
 	for(int i = 0; i < width ; i++)
 		for(int j = 0, k = width - 1; j < width ; j++, k--)
@@ -86,7 +86,7 @@ void updateTableWithCurrent(char Table[FIELD_ROW][FIELD_COL]) {
 				Table[current.row + ri][current.col + cj] = current.array[ri][cj];
 }
 
-int MoveDownFast(Struct temp, char Table[FIELD_ROW][FIELD_COL], TimerInfo gameTimerConfig)
+int MoveDownFast(Tetromino temp, char Table[FIELD_ROW][FIELD_COL], TimerInfo gameTimerConfig)
 {
 	temp.row++;  //move down
 	if(IsValidPisition(temp, Table))
@@ -115,7 +115,7 @@ int MoveDownFast(Struct temp, char Table[FIELD_ROW][FIELD_COL], TimerInfo gameTi
 			}
 		}
 		final += 100 * full_row;
-		Struct new_shape = CopyShape(StructsArray[rand()%7]);
+		Tetromino new_shape = CopyShape(StructsArray[rand()%7]);
 		new_shape.col = rand()%(FIELD_COL - new_shape.width + 1);
 		new_shape.row = 0;
 		DestroyShape(current);
@@ -127,7 +127,7 @@ int MoveDownFast(Struct temp, char Table[FIELD_ROW][FIELD_COL], TimerInfo gameTi
 	return 0;
 }
 
-void ExecuteInputKey(Struct temp,int input_key, char Table[FIELD_ROW][FIELD_COL], TimerInfo gameTimerConfig){
+void ExecuteInputKey(Tetromino temp,int input_key, char Table[FIELD_ROW][FIELD_COL], TimerInfo gameTimerConfig){
 	switch(input_key){
 		case 's':
 			MoveDownFast(temp, Table, gameTimerConfig);
@@ -164,7 +164,7 @@ void PrintGameOverScreen(char Table[FIELD_ROW][FIELD_COL]) {
 	printf("\nScore: %d\n", final);
 }
 
-void InitializeGame(Struct new_shape)
+void InitializeGame(Tetromino new_shape)
 {
 	final = 0;
 	initscr();
@@ -181,7 +181,7 @@ int main() {
 	int input_key;
 	char Table[FIELD_ROW][FIELD_COL] = {0};
 	TimerInfo gameTimerConfig = {.initialTimer = Initial_Timer_Value, .decreaseRate = Decrease_Rate_Value};
-	Struct new_shape = CopyShape(StructsArray[rand() % 7]);
+	Tetromino new_shape = CopyShape(StructsArray[rand() % 7]);
 	InitializeGame(new_shape);
 	if(IsValidPisition(current, Table) == false)
 		GameOn = false;
@@ -189,7 +189,7 @@ int main() {
 	while(GameOn)
 	{
 		input_key = getch();
-		Struct temp = CopyShape(current);
+		Tetromino temp = CopyShape(current);
 		if (input_key != ERR)
 			ExecuteInputKey(temp,input_key, Table, gameTimerConfig);
 		gettimeofday(&now, NULL);
