@@ -1,5 +1,7 @@
 #include "tetris.h"
 
+TimerInfo gameTimerConfig = {.initialTimer = 400000, .decreaseRate = 1000};
+
 Struct CopyShape(Struct shape){
 	Struct new_shape = shape;
 	new_shape.array = malloc(new_shape.width*sizeof(char*));
@@ -71,7 +73,7 @@ int isUpdateRequired(){
 	suseconds_t current_timestamp = (suseconds_t)(now.tv_sec * 1000000 + now.tv_usec);
 	suseconds_t previous_timestamp = (suseconds_t)(before_now.tv_sec * 1000000 + before_now.tv_usec);
 
-	return ((current_timestamp - previous_timestamp) > timer);
+	return ((current_timestamp - previous_timestamp) > gameTimerConfig.initialTimer);
 }
 
 void set_timeout(int time) {
@@ -110,8 +112,8 @@ int MoveDownFast(Struct temp, char Table[FIELD_ROW][FIELD_COL])
 						Table[rk][cl] = Table[rk - 1][cl];
 				for(int cl = 0; cl < FIELD_COL; cl++)
 					Table[rk][cl] = 0;
-				timer -= decrease;
-				decrease--;
+				gameTimerConfig.initialTimer -= gameTimerConfig.decreaseRate;
+				gameTimerConfig.decreaseRate--;
 			}
 		}
 		final += 100 * full_row;

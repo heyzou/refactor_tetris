@@ -9,13 +9,11 @@
 
 int final = 0;
 char GameOn = true;
-suseconds_t timer = 400000;
-int decrease = 1000;
 
-// typedef struct {
-//     suseconds_t timer;
-//     int decrease;
-// } t_time;
+typedef struct {
+    suseconds_t initialTimer;
+    int decreaseRate;
+} TimerInfo;
 
 typedef struct {
     char **array;

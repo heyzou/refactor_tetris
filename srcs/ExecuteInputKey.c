@@ -5,7 +5,7 @@ int MoveDownFast(Struct temp)
 	temp.row++;  //move down
 	if(IsValidPisition(temp))
 		current.row++;
-	else 
+	else
 	{
 		for(int ri = 0; ri < current.width; ri++)
 			for(int cj = 0; cj < current.width; cj++)
@@ -15,7 +15,7 @@ int MoveDownFast(Struct temp)
 		for(int rn=0;rn < R;rn++)
 		{
 			sum = 0;
-			for(int cm = 0;cm < C;cm++) 
+			for(int cm = 0;cm < C;cm++)
 				sum+=Table[rn][cm];
 			if(sum == C)// full row
 			{
@@ -26,7 +26,7 @@ int MoveDownFast(Struct temp)
 						Table[rk][cl]=Table[rk-1][cl];
 				for(int cl=0;cl<C;cl++)
 					Table[rk][cl]=0;
-				timer-=decrease--;
+				time111.timer-=time111.decrease--;
 			}
 		}
 		final += 100 * full_row;
