@@ -50,7 +50,7 @@ void RotateShape(Tetromino shape){
 	DestroyShape(temp);
 }
 
-void PrintTetris(char Table[FIELD_ROW][FIELD_COL]){
+void PrintTetris(char Table[FIELD_ROW][FIELD_COL], int final){
 	char Buffer[FIELD_ROW][FIELD_COL] = {0};
 	for(int ri = 0; ri < current.width; ri++)
 		for(int cj = 0; cj < current.width; cj++)
@@ -88,7 +88,7 @@ void updateTableWithCurrent(char Table[FIELD_ROW][FIELD_COL]) {
 				Table[current.row + ri][current.col + cj] = current.array[ri][cj];
 }
 
-void MoveDownFast(Tetromino temp, char Table[FIELD_ROW][FIELD_COL], TimerInfo gameTimerConfig, bool *GameOn)
+void MoveDownFast(Tetromino temp, char Table[FIELD_ROW][FIELD_COL], TimerInfo gameTimerConfig, bool *GameOn, int *final)
 {
 	temp.row++;  //move down
 	if(IsValidPisition(temp, Table))
@@ -116,7 +116,7 @@ void MoveDownFast(Tetromino temp, char Table[FIELD_ROW][FIELD_COL], TimerInfo ga
 				gameTimerConfig.decreaseRate--;
 			}
 		}
-		final += 100 * FIELD_COL * full_row;
+		*final += 100 * FIELD_COL * full_row;
 		Tetromino new_shape = CopyShape(StructsArray[rand()%7]);
 		new_shape.col = rand()%(FIELD_COL - new_shape.width + 1);
 		new_shape.row = 0;
@@ -127,10 +127,10 @@ void MoveDownFast(Tetromino temp, char Table[FIELD_ROW][FIELD_COL], TimerInfo ga
 	}
 }
 
-void ExecuteInputKey(Tetromino temp,int input_key, char Table[FIELD_ROW][FIELD_COL], TimerInfo gameTimerConfig, bool *GameOn){
+void ExecuteInputKey(Tetromino temp,int input_key, char Table[FIELD_ROW][FIELD_COL], TimerInfo gameTimerConfig, bool *GameOn, int *final){
 	switch(input_key){
 		case 's':
-			MoveDownFast(temp, Table, gameTimerConfig, GameOn);
+			MoveDownFast(temp, Table, gameTimerConfig, GameOn, final);
 			break;
 		case 'd':
 			temp.col++;
@@ -158,7 +158,7 @@ void displayTable(char Table[FIELD_ROW][FIELD_COL]) {
 	}
 }
 
-void PrintGameOverScreen(char Table[FIELD_ROW][FIELD_COL]) {
+void PrintGameOverScreen(char Table[FIELD_ROW][FIELD_COL], int final) {
 	displayTable(Table);
 	printf("\nGame over!\n");
 	printf("\nScore: %d\n", final);
@@ -166,7 +166,6 @@ void PrintGameOverScreen(char Table[FIELD_ROW][FIELD_COL]) {
 
 void InitializeGame(Tetromino new_shape)
 {
-	final = 0;
 	initscr();
 	srand(time(0));
 	set_timeout(1);
@@ -178,6 +177,7 @@ void InitializeGame(Tetromino new_shape)
 }
 
 int main() {
+	int final = 0;
 	int input_key;
 	bool GameOn = true;
 	char Table[FIELD_ROW][FIELD_COL] = {0};
@@ -186,25 +186,25 @@ int main() {
 	InitializeGame(new_shape);
 	if(IsValidPisition(current, Table) == false)
 		GameOn = false;
-	PrintTetris(Table);
+	PrintTetris(Table, final);
 	while(GameOn)
 	{
 		input_key = getch();
 		Tetromino temp = CopyShape(current);
 		if (input_key != ERR)
-			ExecuteInputKey(temp,input_key, Table, gameTimerConfig, &GameOn);
+			ExecuteInputKey(temp,input_key, Table, gameTimerConfig, &GameOn, &final);
 		gettimeofday(&now, NULL);
 		if (isUpdateRequired(gameTimerConfig))
 		{
-			MoveDownFast(temp, Table, gameTimerConfig, &GameOn);
+			MoveDownFast(temp, Table, gameTimerConfig, &GameOn, &final);
 			gettimeofday(&before_now, NULL);
 		}
 		DestroyShape(temp);
-		PrintTetris(Table);
+		PrintTetris(Table, final);
 	}
 	DestroyShape(current);
 	endwin();
-	PrintGameOverScreen(Table);
+	PrintGameOverScreen(Table, final);
 	return 0;
 }
 
