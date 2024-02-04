@@ -105,7 +105,7 @@ int MoveDownFast(Tetromino temp, char Table[FIELD_ROW][FIELD_COL], TimerInfo gam
 
 				full_row++;
 				int rk;
-				for(int rk = rn; rk >= 1; rk--)
+				for(rk = rn; rk >= 1; rk--)
 					for(int cl = 0; cl < FIELD_COL; cl++)
 						Table[rk][cl] = Table[rk - 1][cl];
 				for(int cl = 0; cl < FIELD_COL; cl++)
@@ -114,7 +114,7 @@ int MoveDownFast(Tetromino temp, char Table[FIELD_ROW][FIELD_COL], TimerInfo gam
 				gameTimerConfig.decreaseRate--;
 			}
 		}
-		final += 100 * full_row;
+		final += 100 * FIELD_COL * full_row;
 		Tetromino new_shape = CopyShape(StructsArray[rand()%7]);
 		new_shape.col = rand()%(FIELD_COL - new_shape.width + 1);
 		new_shape.row = 0;
