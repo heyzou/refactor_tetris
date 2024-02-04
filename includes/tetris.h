@@ -9,7 +9,7 @@
 #define FIELD_COL 15
 
 int final = 0;
-char GameOn = true;
+// char GameOn = true;
 
 // Tetromino CopyShape(Tetromino shape);
 

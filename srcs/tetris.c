@@ -8,6 +8,8 @@ Tetromino CopyShape(Tetromino shape){
 	for(int ri = 0; ri < new_shape.width; ri++)
 	{
 		new_shape.array[ri] = (char*)malloc(new_shape.width*sizeof(char));
+		if (new_shape.array[ri] == NULL)
+			exit(1);
 		for(int cj = 0; cj < new_shape.width; cj++)
 			new_shape.array[ri][cj] = shape.array[ri][cj];
 	}
@@ -86,7 +88,7 @@ void updateTableWithCurrent(char Table[FIELD_ROW][FIELD_COL]) {
 				Table[current.row + ri][current.col + cj] = current.array[ri][cj];
 }
 
-int MoveDownFast(Tetromino temp, char Table[FIELD_ROW][FIELD_COL], TimerInfo gameTimerConfig)
+void MoveDownFast(Tetromino temp, char Table[FIELD_ROW][FIELD_COL], TimerInfo gameTimerConfig, bool *GameOn)
 {
 	temp.row++;  //move down
 	if(IsValidPisition(temp, Table))
@@ -121,16 +123,14 @@ int MoveDownFast(Tetromino temp, char Table[FIELD_ROW][FIELD_COL], TimerInfo gam
 		DestroyShape(current);
 		current = new_shape;
 		if(!IsValidPisition(current, Table))
-			GameOn = false;
-		return full_row;
+			*GameOn = false;
 	}
-	return 0;
 }
 
-void ExecuteInputKey(Tetromino temp,int input_key, char Table[FIELD_ROW][FIELD_COL], TimerInfo gameTimerConfig){
+void ExecuteInputKey(Tetromino temp,int input_key, char Table[FIELD_ROW][FIELD_COL], TimerInfo gameTimerConfig, bool *GameOn){
 	switch(input_key){
 		case 's':
-			MoveDownFast(temp, Table, gameTimerConfig);
+			MoveDownFast(temp, Table, gameTimerConfig, GameOn);
 			break;
 		case 'd':
 			temp.col++;
@@ -179,6 +179,7 @@ void InitializeGame(Tetromino new_shape)
 
 int main() {
 	int input_key;
+	bool GameOn = true;
 	char Table[FIELD_ROW][FIELD_COL] = {0};
 	TimerInfo gameTimerConfig = {.initialTimer = Initial_Timer_Value, .decreaseRate = Decrease_Rate_Value};
 	Tetromino new_shape = CopyShape(StructsArray[rand() % 7]);
@@ -191,11 +192,11 @@ int main() {
 		input_key = getch();
 		Tetromino temp = CopyShape(current);
 		if (input_key != ERR)
-			ExecuteInputKey(temp,input_key, Table, gameTimerConfig);
+			ExecuteInputKey(temp,input_key, Table, gameTimerConfig, &GameOn);
 		gettimeofday(&now, NULL);
 		if (isUpdateRequired(gameTimerConfig))
 		{
-			MoveDownFast(temp, Table, gameTimerConfig);
+			MoveDownFast(temp, Table, gameTimerConfig, &GameOn);
 			gettimeofday(&before_now, NULL);
 		}
 		DestroyShape(temp);
@@ -205,4 +206,10 @@ int main() {
 	endwin();
 	PrintGameOverScreen(Table);
 	return 0;
+}
+
+
+__attribute__((destructor))
+static void destructor() {
+    system("leaks -q tetris");
 }
