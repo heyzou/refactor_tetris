@@ -20,7 +20,7 @@ void DestroyShape(Struct shape){
 	free(shape.array);
 }
 
-int IsValidPisition(Struct shape){
+int IsValidPisition(Struct shape, char Table[FIELD_ROW][FIELD_COL]){
 	char **array = shape.array;
 	for(int ri = 0; ri < shape.width; ri++)
 	{
@@ -48,7 +48,7 @@ void RotateShape(Struct shape){
 	DestroyShape(temp);
 }
 
-void PrintTetris(){
+void PrintTetris(char Table[FIELD_ROW][FIELD_COL]){
 	char Buffer[FIELD_ROW][FIELD_COL] = {0};
 	for(int ri = 0; ri < current.width; ri++)
 		for(int cj = 0; cj < current.width; cj++)
@@ -79,21 +79,21 @@ void set_timeout(int time) {
 	timeout(1);
 }
 
-void updateTableWithCurrent() {
+void updateTableWithCurrent(char Table[FIELD_ROW][FIELD_COL]) {
 	for(int ri = 0; ri < current.width; ri++)
 		for(int cj = 0; cj < current.width; cj++)
 			if(current.array[ri][cj] == true)
 				Table[current.row + ri][current.col + cj] = current.array[ri][cj];
 }
 
-int MoveDownFast(Struct temp)
+int MoveDownFast(Struct temp, char Table[FIELD_ROW][FIELD_COL])
 {
 	temp.row++;  //move down
-	if(IsValidPisition(temp))
+	if(IsValidPisition(temp, Table))
 		current.row++;
 	else
 	{
-		updateTableWithCurrent();
+		updateTableWithCurrent(Table);
 		int row_block_num, full_row = 0;
 		for(int rn = 0;rn < FIELD_ROW;rn++)
 		{
@@ -102,7 +102,7 @@ int MoveDownFast(Struct temp)
 				row_block_num += (int)Table[rn][cm];
 			if(row_block_num == FIELD_COL)// full row
 			{
-				
+
 				full_row++;
 				int rk;
 				for(int rk = rn; rk >= 1; rk--)
@@ -120,37 +120,37 @@ int MoveDownFast(Struct temp)
 		new_shape.row = 0;
 		DestroyShape(current);
 		current = new_shape;
-		if(!IsValidPisition(current))
+		if(!IsValidPisition(current, Table))
 			GameOn = false;
 		return full_row;
 	}
 	return 0;
 }
 
-void ExecuteInputKey(Struct temp,int input_key){
+void ExecuteInputKey(Struct temp,int input_key, char Table[FIELD_ROW][FIELD_COL]){
 	switch(input_key){
 		case 's':
-			MoveDownFast(temp);
+			MoveDownFast(temp, Table);
 			break;
 		case 'd':
 			temp.col++;
-			if(IsValidPisition(temp))
+			if(IsValidPisition(temp, Table))
 				current.col++;
 			break;
 		case 'a':
 			temp.col--;
-			if(IsValidPisition(temp))
+			if(IsValidPisition(temp, Table))
 				current.col--;
 			break;
 		case 'w':
 			RotateShape(temp);
-			if(IsValidPisition(temp))
+			if(IsValidPisition(temp, Table))
 				RotateShape(current);
 			break;
 	}
 }
 
-void displayTable() {
+void displayTable(char Table[FIELD_ROW][FIELD_COL]) {
 	for(int ri = 0; ri < FIELD_ROW; ri++){
 		for(int cj = 0; cj < FIELD_COL; cj++)
 			printf("%c ", Table[ri][cj] ? '#': '.');
@@ -158,8 +158,8 @@ void displayTable() {
 	}
 }
 
-void PrintGameOverScreen() {
-	displayTable();
+void PrintGameOverScreen(char Table[FIELD_ROW][FIELD_COL]) {
+	displayTable(Table);
 	printf("\nGame over!\n");
 	printf("\nScore: %d\n", final);
 }
@@ -179,28 +179,29 @@ void InitializeGame(Struct new_shape)
 
 int main() {
 	int input_key;
+	char Table[FIELD_ROW][FIELD_COL] = {0};
 	Struct new_shape = CopyShape(StructsArray[rand() % 7]);
 	InitializeGame(new_shape);
-	if(IsValidPisition(current) == false)
+	if(IsValidPisition(current, Table) == false)
 		GameOn = false;
-	PrintTetris();
+	PrintTetris(Table);
 	while(GameOn)
 	{
 		input_key = getch();
 		Struct temp = CopyShape(current);
 		if (input_key != ERR)
-			ExecuteInputKey(temp,input_key);
+			ExecuteInputKey(temp,input_key, Table);
 		gettimeofday(&now, NULL);
 		if (isUpdateRequired())
 		{
-			MoveDownFast(temp);
+			MoveDownFast(temp, Table);
 			gettimeofday(&before_now, NULL);
 		}
 		DestroyShape(temp);
-		PrintTetris();
+		PrintTetris(Table);
 	}
 	DestroyShape(current);
 	endwin();
-	PrintGameOverScreen();
+	PrintGameOverScreen(Table);
 	return 0;
 }
