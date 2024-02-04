@@ -51,7 +51,7 @@ void RotateShape(Tetromino shape){
 }
 
 void PrintTetris(char Table[FIELD_ROW][FIELD_COL], int final){
-	char Buffer[FIELD_ROW][FIELD_COL] = {0};
+	char Buffer[FIELD_ROW][FIELD_COL] = {};
 	for(int ri = 0; ri < current.width; ri++)
 		for(int cj = 0; cj < current.width; cj++)
 			if(current.array[ri][cj] == true)
@@ -180,7 +180,7 @@ int main() {
 	int final = 0;
 	int input_key;
 	bool GameOn = true;
-	char Table[FIELD_ROW][FIELD_COL] = {0};
+	char Table[FIELD_ROW][FIELD_COL] = {};
 	TimerInfo gameTimerConfig = {.initialTimer = Initial_Timer_Value, .decreaseRate = Decrease_Rate_Value};
 	Tetromino new_shape = CopyShape(StructsArray[rand() % 7]);
 	InitializeGame(new_shape);

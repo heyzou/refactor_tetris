@@ -15,7 +15,7 @@ const Tetromino StructsArray[7] = {
             (char []){0, 1, 1},
             (char []){1, 1, 0},
             (char []){0, 0, 0}
-        }, 3
+        }, 3, 3, 3
     },
     // Reverse Z-shaped block
     {
@@ -23,7 +23,7 @@ const Tetromino StructsArray[7] = {
             (char []){1, 1, 0},
             (char []){0, 1, 1},
             (char []){0, 0, 0}
-        }, 3
+        }, 3, 3, 3
     },
     // T-shaped block
     {
@@ -31,7 +31,7 @@ const Tetromino StructsArray[7] = {
             (char []){0, 1, 0},
             (char []){1, 1, 1},
             (char []){0, 0, 0}
-        }, 3
+        }, 3, 3, 3
     },
     // Reverse L-shaped block
     {
@@ -39,7 +39,7 @@ const Tetromino StructsArray[7] = {
             (char []){0, 0, 1},
             (char []){1, 1, 1},
             (char []){0, 0, 0}
-        }, 3
+        }, 3, 3, 3
     },
     // L-shaped block
     {
@@ -47,14 +47,14 @@ const Tetromino StructsArray[7] = {
             (char []){1, 0, 0},
             (char []){1, 1, 1},
             (char []){0, 0, 0}
-        }, 3
+        }, 3, 3, 3
     },
     // Square block
     {
         (char *[]){
             (char []){1, 1},
             (char []){1, 1}
-        }, 2
+        }, 2, 2, 3
     },
     // Line block
     {
@@ -63,7 +63,7 @@ const Tetromino StructsArray[7] = {
             (char []){1, 1, 1, 1},
             (char []){0, 0, 0, 0},
             (char []){0, 0, 0, 0}
-        }, 4
+        }, 4, 4, 4
     }
 };
 

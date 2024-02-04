@@ -1,7 +1,7 @@
 NAME		=	tetris
 CC			=	cc
 INCLUDE		=	-I./includes
-FLAGS		=
+FLAGS		= 	-Wall -Wextra -Werror
 # FLAGS		=-g -fsanitize=address
 RM			=	rm -rf
 
